@@ -73,7 +73,7 @@ function HeroGraph() {
   });
 
   return (
-    <svg className="hero-graph" viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="xMidYMid meet">
+    <svg className="hero-graph" viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="xMidYMid meet" role="img" aria-label="Animated workflow map: data flows from ingest and classify through reasoning and decision steps to system output">
       {/* Edges */}
       <g>
         {edges.map(([a, b], i) => {

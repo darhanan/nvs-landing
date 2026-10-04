@@ -21,25 +21,55 @@ function Reveal({ children, delay = 0, as: Tag = 'div', className = '', ...rest 
   return <Tag ref={ref} className={`reveal ${className}`} {...rest}>{children}</Tag>;
 }
 
-/* -------- NAV -------- */
+/* -------- NAV (Bootstrap navbar, collapses to a hamburger below md) -------- */
 function Nav() {
+  // Close the mobile menu after a link is chosen
+  const closeMenu = () => {
+    const menu = document.getElementById('nvs-nav-menu');
+    if (menu && menu.classList.contains('show')) {
+      bootstrap.Collapse.getOrCreateInstance(menu).hide();
+    }
+  };
+
   return (
-    <div className="nav-wrap">
-      <nav className="nav">
-        <a href="#" className="nav-logo">
+    <div className="nav-wrap px-3">
+      <nav className="navbar navbar-expand-md bg-dark nvs-navbar" data-bs-theme="dark" aria-label="Main navigation">
+        <a href="#" className="navbar-brand nav-logo py-0 me-4" aria-label="NVS home">
           <img src="assets/nvs-logo.svg" alt="NVS" className="nav-logo-flag" />
         </a>
-        <ul className="nav-links">
-          <li><a href="#products">Products</a></li>
-          <li><a href="#company">Company</a></li>
-          <li><a href="#careers">Careers</a></li>
-          <li><a href="#contact">Contact</a></li>
-        </ul>
-        <div className="nav-cta">
-          <a href="#contact" className="btn btn-dark btn-sm">Work with us</a>
+        <div className="collapse navbar-collapse order-last order-md-0" id="nvs-nav-menu">
+          <ul className="navbar-nav nav-links mx-auto gap-1 mt-2 mt-md-0 pb-2 pb-md-0">
+            <li className="nav-item"><a className="nav-link" href="#products" onClick={closeMenu}>Products</a></li>
+            <li className="nav-item"><a className="nav-link" href="#team" onClick={closeMenu}>Company</a></li>
+            <li className="nav-item"><a className="nav-link" href="#careers" onClick={closeMenu}>Careers</a></li>
+            <li className="nav-item"><a className="nav-link" href="#contact" onClick={closeMenu}>Contact</a></li>
+          </ul>
+        </div>
+        <div className="nav-cta d-flex align-items-center gap-2 ms-md-4">
+          <a href="#contact" className="btn btn-primary btn-sm">Work with us</a>
+          <button
+            className="navbar-toggler rounded-pill"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#nvs-nav-menu"
+            aria-controls="nvs-nav-menu"
+            aria-expanded="false"
+            aria-label="Toggle navigation"
+          >
+            <span className="navbar-toggler-icon"></span>
+          </button>
         </div>
       </nav>
     </div>
+  );
+}
+
+/* Shared arrow icon used inside buttons and links (decorative) */
+function ArrowIcon() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+      <path d="M3 7h8m0 0L7.5 3.5M11 7L7.5 10.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
   );
 }
 
@@ -48,7 +78,7 @@ function Hero() {
   return (
     <section className="hero container">
       <div className="panel hero-panel">
-        <div className="hero-eyebrow-row">
+        <div className="hero-eyebrow-row d-flex align-items-center justify-content-between flex-wrap gap-2">
           <span className="eyebrow">AI-native systems</span>
           <span className="eyebrow" style={{ fontFamily: 'var(--mono)', textTransform: 'none', letterSpacing: '0.04em' }}>
             <span style={{ background: 'var(--accent)', width: 6, height: 6, borderRadius: '50%' }}></span>
@@ -56,29 +86,27 @@ function Hero() {
           </span>
         </div>
 
-        <h1 className="h-display hero-headline">
+        <h1 className="h-display hero-headline mt-0 mb-4">
           We build AI-native systems<br/>
           that <em style={{ fontStyle: 'italic', color: 'var(--accent)' }}>automate</em> real work
         </h1>
 
-        <p className="lead hero-sub">
+        <p className="lead hero-sub mt-0">
           From internal tools to scalable products, NVS designs and builds systems that replace manual processes and unlock faster execution.
         </p>
 
-        <div className="hero-ctas">
-          <a href="#products" className="btn btn-primary">
+        <div className="hero-ctas d-flex flex-wrap gap-3">
+          <a href="#products" className="btn btn-primary btn-lg">
             View products
-            <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-              <path d="M3 7h8m0 0L7.5 3.5M11 7L7.5 10.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
+            <ArrowIcon />
           </a>
-          <a href="#contact" className="btn btn-ghost">Work with us</a>
+          <a href="#contact" className="btn btn-outline-secondary btn-lg">Work with us</a>
         </div>
 
         <div className="hero-graph-wrap">
-          <span className="hero-graph-corner">SYS / WORKFLOW MAP</span>
+          <span className="hero-graph-corner" aria-hidden="true">SYS / WORKFLOW MAP</span>
           <window.HeroGraph />
-          <span className="hero-graph-caption">11 nodes · 15 edges · live</span>
+          <span className="hero-graph-caption" aria-hidden="true">11 nodes · 15 edges · live</span>
         </div>
       </div>
     </section>
@@ -94,6 +122,12 @@ function Products() {
       name: 'Jobescape',
       tag: 'CAREER · AI COACH',
       desc: 'A personal AI plan for landing your next role — skills tracking, daily streaks, AI assistants for interviews and outreach, and certified completion.',
+      darkControls: true,
+      slides: [
+        { src: 'assets/jobescape.png',        alt: 'Jobescape personal plan dashboard' },
+        { src: 'assets/jobescape-levels.png', alt: 'Jobescape platinum level, certification and weekly streak' },
+        { src: 'assets/jobescape-streak.png', alt: 'Jobescape weekly streak tracker' },
+      ],
     },
     {
       id: 2,
@@ -101,15 +135,21 @@ function Products() {
       name: 'Genescape',
       tag: 'CREATIVE · IMAGE & VIDEO',
       desc: 'Pick a character, pick an app, done. A studio of AI image, video and music apps for creators — from headshots and portraits to viral video formats.',
+      darkControls: false,
+      slides: [
+        { src: 'assets/genescape.png',         alt: 'Genescape image apps studio' },
+        { src: 'assets/genescape-apps.png',    alt: 'Genescape portrait and photo app tiles' },
+        { src: 'assets/genescape-gallery.png', alt: 'Genescape image and video app gallery' },
+      ],
     },
   ];
 
   return (
     <section className="section container" id="products">
-      <Reveal className="section-head">
+      <Reveal className="section-head d-flex align-items-end justify-content-between flex-wrap">
         <div className="section-head-text">
-          <span className="eyebrow">Section 03 — Products</span>
-          <h2 className="h-section" style={{ marginTop: 16 }}>
+          <span className="eyebrow mb-3">Section 03 — Products</span>
+          <h2 className="h-section mt-3">
             Our products
           </h2>
         </div>
@@ -118,26 +158,24 @@ function Products() {
         </p>
       </Reveal>
 
-      <div className="products-grid">
+      <div className="row g-4">
         {products.map((p, i) => (
-          <Reveal key={p.id} delay={i * 80}>
-            <article className="product-card">
-              <div className="product-card-head">
-                <div className="product-mark" data-i={p.id}>{p.mark}</div>
+          <Reveal key={p.id} delay={i * 80} className="col-sm-12 col-md-6 col-lg-6">
+            <article className="card product-card p-4 p-sm-5 gap-4">
+              <div className="product-card-head d-flex align-items-center justify-content-between gap-3">
+                <div className="product-mark" data-i={p.id} aria-hidden="true">{p.mark}</div>
                 <span className="product-tag">{p.tag}</span>
               </div>
-              <h3 className="h-card product-title">{p.name}</h3>
-              <p className="product-desc">{p.desc}</p>
-              <ProductVis i={p.id} />
-              <div className="product-card-foot">
+              <h3 className="card-title h-card product-title m-0">{p.name}</h3>
+              <p className="card-text product-desc m-0">{p.desc}</p>
+              <ProductVis id={p.id} name={p.name} slides={p.slides} darkControls={p.darkControls} />
+              <div className="card-footer product-card-foot d-flex align-items-center justify-content-between pt-3">
                 <span className="muted" style={{ fontFamily: 'var(--mono)', fontSize: 11, letterSpacing: '0.04em' }}>
                   PRODUCT 0{p.id}
                 </span>
                 <a href="#" className="arrow-link">
                   Learn more
-                  <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-                    <path d="M3 7h8m0 0L7.5 3.5M11 7L7.5 10.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
+                  <ArrowIcon />
                 </a>
               </div>
             </article>
@@ -164,13 +202,57 @@ function useClock() {
   return t;
 }
 
-/* -------- Product visualizations — real product screenshots -------- */
-function ProductVis({ i }) {
-  const src = i === 1 ? 'assets/jobescape.png' : 'assets/genescape.png';
-  const alt = i === 1 ? 'Jobescape product preview' : 'Genescape product preview';
+/* -------- Product visualizations — Bootstrap carousel of real product screenshots -------- */
+function ProductVis({ id, name, slides, darkControls }) {
+  const ref = useRef(null);
+  const carouselId = `product-carousel-${id}`;
+
+  // The page is rendered by React after Bootstrap's own load-time scan, so start the carousel here
+  useEffect(() => {
+    const carousel = bootstrap.Carousel.getOrCreateInstance(ref.current);
+    return () => carousel.dispose();
+  }, []);
+
   return (
-    <div className="product-vis product-vis-img">
-      <img src={src} alt={alt} />
+    <div
+      ref={ref}
+      id={carouselId}
+      className="product-vis product-vis-img carousel slide"
+      data-bs-ride="carousel"
+      data-bs-interval="5000"
+      data-bs-theme={darkControls ? 'dark' : undefined}
+      role="region"
+      aria-roledescription="carousel"
+      aria-label={`${name} screenshots`}
+    >
+      <div className="carousel-indicators">
+        {slides.map((s, k) => (
+          <button
+            key={k}
+            type="button"
+            data-bs-target={`#${carouselId}`}
+            data-bs-slide-to={k}
+            className={k === 0 ? 'active' : ''}
+            aria-current={k === 0 ? 'true' : undefined}
+            aria-label={`Show ${name} screenshot ${k + 1}`}
+          ></button>
+        ))}
+      </div>
+      <div className="carousel-inner">
+        {slides.map((s, k) => (
+          <div className={`carousel-item${k === 0 ? ' active' : ''}`} key={s.src}>
+            <img src={s.src} alt={s.alt} className="d-block w-100" />
+          </div>
+        ))}
+      </div>
+      <button className="carousel-control-prev" type="button" data-bs-target={`#${carouselId}`} data-bs-slide="prev">
+        <span className="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span className="visually-hidden">Previous screenshot</span>
+      </button>
+      <button className="carousel-control-next" type="button" data-bs-target={`#${carouselId}`} data-bs-slide="next">
+        <span className="carousel-control-next-icon" aria-hidden="true"></span>
+        <span className="visually-hidden">Next screenshot</span>
+      </button>
     </div>
   );
 }
@@ -420,10 +502,10 @@ function Capabilities() {
 
   return (
     <section className="section container" id="capabilities">
-      <Reveal className="section-head">
+      <Reveal className="section-head d-flex align-items-end justify-content-between flex-wrap">
         <div className="section-head-text">
-          <span className="eyebrow">Section 04 — Capabilities</span>
-          <h2 className="h-section" style={{ marginTop: 16 }}>What we do</h2>
+          <span className="eyebrow mb-3">Section 04 — Capabilities</span>
+          <h2 className="h-section mt-3">What we do</h2>
         </div>
       </Reveal>
       <Reveal>
@@ -434,7 +516,7 @@ function Capabilities() {
               <span className="cap-title">{it.title}</span>
               <p className="cap-desc">{it.desc}</p>
               <span className="cap-arrow">
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
                   <path d="M5 10h10m0 0L10 5m5 5l-5 5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
               </span>
@@ -456,19 +538,19 @@ function HowWeWork() {
   ];
   return (
     <section className="section container" id="how">
-      <Reveal className="section-head">
+      <Reveal className="section-head d-flex align-items-end justify-content-between flex-wrap">
         <div className="section-head-text">
-          <span className="eyebrow">Section 05 — Principles</span>
-          <h2 className="h-section" style={{ marginTop: 16 }}>How we work</h2>
+          <span className="eyebrow mb-3">Section 05 — Principles</span>
+          <h2 className="h-section mt-3">How we work</h2>
         </div>
         <p className="lead" style={{ maxWidth: '36ch' }}>
           Four principles we keep coming back to. They shape what we say yes to — and what we don't.
         </p>
       </Reveal>
       <Reveal>
-        <div className="how-grid">
+        <div className="row g-0 how-grid">
           {items.map((t, i) => (
-            <div className="how-cell" key={i}>
+            <div className="col-12 col-md-6 how-cell d-flex flex-column gap-3" key={i}>
               <span className="how-cell-num">— 0{i + 1}</span>
               <p className="how-cell-text">{t}</p>
             </div>
@@ -485,33 +567,37 @@ function SocialProof() {
   return (
     <section className="section container" id="proof">
       <Reveal>
-        <div className="panel proof-panel">
-          <span className="eyebrow" style={{ marginBottom: 24 }}>Section 06 — Trust</span>
-          <h2 className="h-section proof-title" style={{ marginTop: 16 }}>
+        <div className="panel proof-panel text-center">
+          <span className="eyebrow mb-4">Section 06 — Trust</span>
+          <h2 className="h-section proof-title mt-3 mb-5 mx-auto">
             Trusted by teams<br/>building <em style={{ fontStyle: 'italic', color: 'var(--accent)' }}>real</em> products
           </h2>
 
           <div className="metrics">
-            <div className="metric">
-              <div className="metric-num"><span className="accent">50+</span></div>
-              <p className="metric-label">Systems delivered to production</p>
-            </div>
-            <div className="metric">
-              <div className="metric-num">Fast-growing</div>
-              <p className="metric-label">Used by teams scaling 3–10×</p>
-            </div>
-            <div className="metric">
-              <div className="metric-num"><span className="accent">M+</span></div>
-              <p className="metric-label">Automated actions processed monthly</p>
+            <div className="row g-4">
+              <div className="col-12 col-md-4 metric text-center">
+                <div className="metric-num"><span className="accent">50+</span></div>
+                <p className="metric-label mx-auto my-0">Systems delivered to production</p>
+              </div>
+              <div className="col-12 col-md-4 metric text-center">
+                <div className="metric-num">Fast-growing</div>
+                <p className="metric-label mx-auto my-0">Used by teams scaling 3–10×</p>
+              </div>
+              <div className="col-12 col-md-4 metric text-center">
+                <div className="metric-num"><span className="accent">M+</span></div>
+                <p className="metric-label mx-auto my-0">Automated actions processed monthly</p>
+              </div>
             </div>
           </div>
 
-          <div className="logo-row">
+          <div className="row g-4 align-items-center logo-row">
             {logos.map(l => (
-              <div className="logo-placeholder" key={l}>{l}</div>
+              <div className="col-4 col-md-2" key={l}>
+                <div className="logo-placeholder">{l}</div>
+              </div>
             ))}
           </div>
-          <p className="muted" style={{ fontSize: 12, marginTop: 24, fontFamily: 'var(--mono)', letterSpacing: '0.04em' }}>
+          <p className="muted mt-4" style={{ fontSize: 12, fontFamily: 'var(--mono)', letterSpacing: '0.04em' }}>
             CLIENT LOGOS — PLACEHOLDER
           </p>
         </div>
@@ -525,30 +611,28 @@ function CaseStudies() {
   const cases = [
     { n: '01', tag: 'E-commerce operations',  metric: <><>70<span className="small">%</span></></>, desc: 'Automated internal workflows and reduced manual processing time by 70%.' },
     { n: '02', tag: 'Product team',           metric: <><>5<span className="small">+</span></></>, desc: 'Built internal tools that replaced 5+ disconnected systems.' },
-    { n: '03', tag: 'Data workflows',         metric: <><>sec<span className="small" style={{ display: 'block', fontSize: 18, marginTop: 4 }}>was hours</span></></>, desc: 'Implemented real-time decision system reducing response time from hours to seconds.' },
+    { n: '03', tag: 'Data workflows',         metric: <><>sec<span className="small d-block mt-1" style={{ fontSize: 18 }}>was hours</span></></>, desc: 'Implemented real-time decision system reducing response time from hours to seconds.' },
   ];
   return (
     <section className="section container" id="cases">
-      <Reveal className="section-head">
+      <Reveal className="section-head d-flex align-items-end justify-content-between flex-wrap">
         <div className="section-head-text">
-          <span className="eyebrow">Section 07 — Case studies</span>
-          <h2 className="h-section" style={{ marginTop: 16 }}>What we've built</h2>
+          <span className="eyebrow mb-3">Section 07 — Case studies</span>
+          <h2 className="h-section mt-3">What we've built</h2>
         </div>
       </Reveal>
-      <div className="cases-grid">
+      <div className="row g-4">
         {cases.map((c, i) => (
-          <Reveal key={c.n} delay={i * 80}>
-            <article className="case-card">
+          <Reveal key={c.n} delay={i * 80} className="col-sm-12 col-md-6 col-lg-4 d-flex">
+            <article className="card case-card w-100 h-100 gap-4">
               <span className="case-num">CASE {c.n}</span>
-              <p className="case-tag">{c.tag}</p>
+              <h3 className="card-title case-tag m-0">{c.tag}</h3>
               <div className="case-metric">{c.metric}</div>
-              <p className="case-desc">{c.desc}</p>
-              <div className="case-foot">
+              <p className="card-text case-desc m-0">{c.desc}</p>
+              <div className="card-footer case-foot pt-3">
                 <a href="#" className="arrow-link">
                   Read the case
-                  <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-                    <path d="M3 7h8m0 0L7.5 3.5M11 7L7.5 10.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
+                  <ArrowIcon />
                 </a>
               </div>
             </article>
@@ -598,7 +682,7 @@ function Team() {
     const el = railRef.current;
     if (!el) return;
     const card = el.querySelector('.team-card');
-    const step = card ? card.getBoundingClientRect().width + 20 : 300;
+    const step = card ? card.getBoundingClientRect().width + 24 : 300;
     el.scrollBy({ left: dir * step * 1.5, behavior: 'smooth' });
   };
 
@@ -606,56 +690,52 @@ function Team() {
     <section className="section container team-section" id="team">
       <Reveal>
         <div className="team-panel">
-          <div className="team-intro">
-            <span className="eyebrow">Section 08 — Team</span>
-            <h2 className="h-section">The team building NVS</h2>
-            <p className="lead">
+          <div className="team-intro text-center mx-auto">
+            <span className="eyebrow mb-4">Section 08 — Team</span>
+            <h2 className="h-section mt-0 mb-4">The team building NVS</h2>
+            <p className="lead mx-auto my-0">
               Small by design. Senior by default. We bring together engineers, designers, and operators who care about shipping systems that actually get used.
             </p>
-            <div className="btn-cta">
-              <a href="#careers" className="btn-light">
+            <div className="btn-cta mt-4">
+              <a href="#careers" className="btn btn-light">
                 Open roles
-                <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-                  <path d="M3 7h8m0 0L7.5 3.5M11 7L7.5 10.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
+                <ArrowIcon />
               </a>
             </div>
           </div>
 
           <div className="team-rail-wrap">
-            <div className="team-rail" ref={railRef}>
+            <div className="team-rail d-flex gap-4" ref={railRef}>
               {team.map((m, idx) => (
-                <article className="team-card" key={m.name}>
-                  <div className="team-portrait"><PortraitVis tone={m.tone} idx={idx} /></div>
-                  <div className="team-card-overlay">
+                <article className="card team-card border-0" key={m.name}>
+                  <div className="team-portrait card-img" role="img" aria-label={`Portrait of ${m.name}`}>
+                    <PortraitVis tone={m.tone} idx={idx} />
+                  </div>
+                  <div className="card-img-overlay team-card-overlay">
                     <div>
-                      <h3 className="team-card-role">{m.role}</h3>
-                      <p className="team-card-name">{m.name}</p>
+                      <h3 className="card-title team-card-role mt-0 mb-1">{m.role}</h3>
+                      <p className="card-text team-card-name m-0">{m.name}</p>
                     </div>
-                    <div className="team-card-arrow">
-                      <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-                        <path d="M3 7h8m0 0L7.5 3.5M11 7L7.5 10.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                      </svg>
+                    <div className="team-card-arrow" aria-hidden="true">
+                      <ArrowIcon />
                     </div>
                   </div>
                 </article>
               ))}
             </div>
 
-            <div className="team-rail-foot">
-              <div className="team-progress">
+            <div className="team-rail-foot d-flex align-items-center justify-content-between gap-4">
+              <div className="team-progress flex-grow-1" aria-hidden="true">
                 <div className="team-progress-bar" style={{ width: `${30 + progress * 70}%`, transform: `translateX(${progress * 200}%)` }} />
               </div>
-              <div className="team-controls">
-                <button className="team-ctrl" onClick={() => scrollBy(-1)} disabled={atStart} aria-label="Previous">
-                  <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+              <div className="team-controls btn-group gap-2" role="group" aria-label="Team carousel controls">
+                <button type="button" className="btn btn-outline-secondary team-ctrl rounded-circle ms-0" onClick={() => scrollBy(-1)} disabled={atStart} aria-label="Previous team members">
+                  <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
                     <path d="M11 7H3m0 0l3.5-3.5M3 7l3.5 3.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
                   </svg>
                 </button>
-                <button className="team-ctrl" onClick={() => scrollBy(1)} disabled={atEnd} aria-label="Next">
-                  <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-                    <path d="M3 7h8m0 0L7.5 3.5M11 7L7.5 10.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
+                <button type="button" className="btn btn-outline-secondary team-ctrl rounded-circle ms-0" onClick={() => scrollBy(1)} disabled={atEnd} aria-label="Next team members">
+                  <ArrowIcon />
                 </button>
               </div>
             </div>
@@ -681,7 +761,7 @@ function PortraitVis({ tone, idx }) {
   const phase = Math.sin(t * 0.5 + idx) * 4;
 
   return (
-    <svg viewBox="0 0 280 380" preserveAspectRatio="xMidYMid slice">
+    <svg viewBox="0 0 280 380" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
       <defs>
         <linearGradient id={`bg-${idx}`} x1="0" y1="0" x2="1" y2="1">
           <stop offset="0%" stopColor={p.bg}/>
@@ -735,25 +815,27 @@ function Careers() {
     <section className="section container" id="careers">
       <Reveal>
         <div className="panel careers-panel">
-          <div>
-            <span className="eyebrow">Section 09 — Careers</span>
-            <h2 className="h-section" style={{ marginTop: 16, marginBottom: 24 }}>Join NVS</h2>
-            <p className="lead" style={{ marginBottom: 32 }}>
-              We're building systems that change how work gets done. If you care about speed, clarity, and real impact — you'll fit here.
-            </p>
-            <a href="#" className="btn btn-primary">
-              View open roles
-              <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-                <path d="M3 7h8m0 0L7.5 3.5M11 7L7.5 10.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
-            </a>
-          </div>
-          <div className="careers-art">
-            <div className="careers-art-grid"></div>
-            <div className="careers-art-text">
-              build<br/>
-              <span className="accent">real</span><br/>
-              things
+          <div className="row g-5 align-items-center">
+            <div className="col-12 col-lg-7">
+              <span className="eyebrow">Section 09 — Careers</span>
+              <h2 className="h-section mt-3 mb-4">Join NVS</h2>
+              <p className="lead careers-lead">
+                We're building systems that change how work gets done. If you care about speed, clarity, and real impact — you'll fit here.
+              </p>
+              <a href="#" className="btn btn-primary btn-lg">
+                View open roles
+                <ArrowIcon />
+              </a>
+            </div>
+            <div className="col-12 col-lg-5">
+              <div className="careers-art" aria-hidden="true">
+                <div className="careers-art-grid"></div>
+                <div className="careers-art-text">
+                  build<br/>
+                  <span className="accent">real</span><br/>
+                  things
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -767,25 +849,23 @@ function FinalCTA() {
   return (
     <section className="section container" id="contact">
       <Reveal>
-        <div className="panel final-panel">
+        <div className="panel final-panel text-center">
           <div className="final-bg-pattern"></div>
-          <div style={{ position: 'relative' }}>
-            <span className="eyebrow" style={{ color: 'rgba(245,239,228,0.6)', marginBottom: 24, display: 'inline-flex' }}>
+          <div className="position-relative">
+            <span className="eyebrow final-eyebrow mb-4">
               <span style={{ background: 'var(--accent)', width: 6, height: 6, borderRadius: '50%' }}></span>
               Section 10 — Let's talk
             </span>
-            <h2 className="h-display" style={{ margin: '24px auto 0', maxWidth: '14ch' }}>
+            <h2 className="h-display mt-4 mb-0 mx-auto" style={{ maxWidth: '14ch' }}>
               Let's build<br/>
               something <em style={{ fontStyle: 'italic', color: 'var(--accent)' }}>real</em>
             </h2>
-            <p className="lead">
+            <p className="lead mt-4 mx-auto">
               Tell us what you're working on — we'll help you turn it into a system that scales.
             </p>
-            <a href="#" className="btn btn-primary">
+            <a href="#" className="btn btn-primary btn-lg">
               Work with us
-              <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-                <path d="M3 7h8m0 0L7.5 3.5M11 7L7.5 10.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
+              <ArrowIcon />
             </a>
           </div>
         </div>
@@ -799,40 +879,44 @@ function Footer() {
   return (
     <footer className="footer">
       <div className="footer-inner">
-        <div className="footer-brand">
-          <div className="nav-logo" style={{ color: 'var(--ink)' }}>
-            <img src="assets/nvs-logo.svg" alt="NVS" className="nav-logo-flag" style={{ height: 26, width: 52 }} />
+        <div className="row g-5">
+          <div className="col-6 col-lg-5">
+            <div className="footer-brand">
+              <div className="nav-logo" style={{ color: 'var(--ink)' }}>
+                <img src="assets/nvs-logo.svg" alt="NVS" className="nav-logo-flag" style={{ height: 26, width: 52 }} />
+              </div>
+              <p className="footer-tag mt-3">
+                AI-native systems that automate real work. Built for teams who care about outcomes.
+              </p>
+            </div>
           </div>
-          <p className="footer-tag">
-            AI-native systems that automate real work. Built for teams who care about outcomes.
-          </p>
-        </div>
-        <div className="footer-col">
-          <h4 className="footer-col-title">Products</h4>
-          <ul>
-            <li><a href="#">Jobescape</a></li>
-            <li><a href="#">Genescape</a></li>
-          </ul>
-        </div>
-        <div className="footer-col">
-          <h4 className="footer-col-title">Company</h4>
-          <ul>
-            <li><a href="#">About</a></li>
-            <li><a href="#careers">Careers</a></li>
-            <li><a href="#cases">Case studies</a></li>
-            <li><a href="#contact">Contact</a></li>
-          </ul>
-        </div>
-        <div className="footer-col">
-          <h4 className="footer-col-title">Connect</h4>
-          <ul>
-            <li><a href="#">hello@nvs.team</a></li>
-            <li><a href="#">LinkedIn</a></li>
-            <li><a href="#">X / Twitter</a></li>
-          </ul>
+          <nav className="col-6 col-lg footer-col" aria-label="Products">
+            <h4 className="footer-col-title mt-0 mb-3">Products</h4>
+            <ul className="list-unstyled d-flex flex-column gap-2 m-0">
+              <li><a href="#">Jobescape</a></li>
+              <li><a href="#">Genescape</a></li>
+            </ul>
+          </nav>
+          <nav className="col-6 col-lg footer-col" aria-label="Company">
+            <h4 className="footer-col-title mt-0 mb-3">Company</h4>
+            <ul className="list-unstyled d-flex flex-column gap-2 m-0">
+              <li><a href="#">About</a></li>
+              <li><a href="#careers">Careers</a></li>
+              <li><a href="#cases">Case studies</a></li>
+              <li><a href="#contact">Contact</a></li>
+            </ul>
+          </nav>
+          <nav className="col-6 col-lg footer-col" aria-label="Connect">
+            <h4 className="footer-col-title mt-0 mb-3">Connect</h4>
+            <ul className="list-unstyled d-flex flex-column gap-2 m-0">
+              <li><a href="#">hello@nvs.team</a></li>
+              <li><a href="#">LinkedIn</a></li>
+              <li><a href="#">X / Twitter</a></li>
+            </ul>
+          </nav>
         </div>
       </div>
-      <div className="footer-bottom">
+      <div className="footer-bottom d-flex justify-content-between align-items-center">
         <span>© NVS</span>
         <span className="footer-mono">NVS / 2026 / SHIPPING</span>
       </div>
